@@ -1,0 +1,1 @@
+ansible-playbook playbooks/uninstall.yaml -i inventory/hosts.ini -Kk

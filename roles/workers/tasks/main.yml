@@ -1,0 +1,29 @@
+- name: Create a directory if it does not exist
+  ansible.builtin.file:
+    path: /etc/rancher/rke2/
+    state: directory
+    mode: '0755'
+
+- name: Creating an empty file
+  file:
+    path: "/etc/rancher/rke2/config.yaml"
+    state: touch
+  
+- name: Creating a file with content
+  copy:
+    dest: "/etc/rancher.rke2/config.yaml"
+    content: |
+      token: {{ hostvars[groups['cluster_master'][0]].rke2_config_token }}
+      servier: https://{{ groups['cluster_master'][0] }}:9345
+
+- name: Additional Agents Only - Execute the install script
+  ansible.builtin.shell:
+    cmd: 'INSTALL_RKE2_ARTIFACT_PATH=/opt/rke INSTALL_RKE2_TYPE="agent" she /opt/rke2/install.sh'
+  ignore_errors: yes
+
+- name: Additional Agents Only -Enable and check RKE2 agent service
+  systemd:
+    name: rke2-agents
+    daemon_reload: yes
+    state: restarted
+    enable: yes

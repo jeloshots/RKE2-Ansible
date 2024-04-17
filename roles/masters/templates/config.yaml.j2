@@ -1,0 +1,5 @@
+write-kubeconfig-mode: "0644"
+node-taint:
+  - "node-role.kubernetes.io/etcd-true:NoExecute"
+  - "node-role.kubernetes.io/control-palne=true:NoSchedule"
+cluster-init: true

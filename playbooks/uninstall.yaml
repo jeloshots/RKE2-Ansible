@@ -1,0 +1,33 @@
+- name: Remove RKE2
+  hosts: all
+  vars_prompt:
+    - name: uninstallrke2
+      prompt: Delete rke2 from cluster? [Type yes or no]
+      private: false
+  tasks:
+    - name: Print message
+    ansible.builtin.debug:
+      msg: 'Executing {{ uninstallrke2 }}'
+      verbostiy: 1
+    - name: Waiting for 60 seconds before rke2 will be uninstalled. Ctl C + A in terminal to cancel the uninstall
+      ansible.builtin.pause:
+        minutes: 1
+    - name: uninstalling RKE2
+      ansible.builtin.shell:
+        cmd: |
+          /usr/local/bin/rke2-uninstall.sh
+      become: true
+      when: uninstallrke2 == "yes"
+
+- name: Remove rancher config files
+  hosts: all
+  vars_prompt:
+    - name: removeconfigfiles
+      prompt: Do you want to delete rancher configuration files? [Type yes or no]
+      private: false
+  tasks:
+    - name: Remove rancher config files
+      ansible.builtin.shell:
+        cmd: |
+          sudo rm -rf /var/lib/rancher && sudo rm -rf /etc/rancher
+      when: removeconfigfiles == "yes"
